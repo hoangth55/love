@@ -1,0 +1,24 @@
+{% extends "user_page.html" %}
+{% block title %}{{ category.name }}{% endblock %}
+{% block contentCatagories %}
+    <div data-spy="scroll" data-target="#navbarExample" data-offset="0" class="scrollspy-example"><h1>Libray</h1>
+        {% if not book.public_share %}
+            You can't view this book because it's private
+        {% else %}
+            <h1>{{ book.title }}</h1>
+
+            Shared by:{{ book.uploader }}
+            Uploaded date:{{ book.upload_date }}
+            {% if book.file %}Size: {{ book.file.size|filesizeformat }}
+            {% else %}Size: 0
+            {% endif %}
+            Readers:{{ book.read_count }}
+            Like:{{ book.vote_set.count }}
+            <br/>
+            {% if not is_voted %}
+                <a href="/vote?id={{ book.id }}"><input type="button" value="Like"/></a>
+
+            {% endif %}
+        {% endif %}
+    </div>
+{% endblock %}

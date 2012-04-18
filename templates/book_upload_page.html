@@ -1,0 +1,14 @@
+{% extends "user_page.html" %}
+{% block title %}Upload books{% endblock %}
+{% block contentCatagories %}
+    <h2>Select {{ title }} to upload</h2>
+    <form enctype="multipart/form-data" method="post" action=".">
+        <table id="upload_table">
+            {% csrf_token %}
+            {{ form.as_table }}
+            {# input phai nam trong form #}
+        </table>
+        <input type="submit" value="Upload"/>
+    </form>
+    Status{{ status }}
+{% endblock %}

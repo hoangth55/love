@@ -1,0 +1,8 @@
+{% for friend_request in friend_request_list %}
+    <div class="friend_request">
+        {{ friend_request.from_user }} wants to be friend with you
+        <a href="/user/{{ user.username }}/friend_accept?id={{ friend_request.from_user.id }}"><input type="button" value="Accept"></a>
+        <a href="/user/{{ user.username }}/friend_decline?id={{ friend_request.from_user.id }}"><input type="button" value="Decline"></a>
+    </div>
+    <br/>
+{% endfor %}

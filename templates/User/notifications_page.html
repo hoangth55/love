@@ -1,0 +1,10 @@
+{% for posts in total_notifications %}
+    {% for post in posts %}
+        <div class="notification">
+            {{ post.creator }} has posted in {{ post.thread }}:<br/>
+            {{ post.content }}<br/>
+            {{ post.created }}
+        </div>
+        <br/>
+    {% endfor  %}
+{% endfor %}

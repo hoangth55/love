@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}{{ user.username }}|Information{% endblock %}
+
+{% block content %}
+    <div class="navbar-inner-background">
+
+
+            <div class="modal" style="position: relative; top: auto; left: auto; margin-left: 250px;margin-right: 250px; margin-top: auto; z-index: 1">
+
+                <div class="modal-body">
+                    <div class="pull-center">
+                        <form>
+                            {% csrf_token %}
+                            <table>
+                                {{ info_form.as_table }}
+                            </table>
+
+                            <div class="modal-footer">
+                                <input type="submit" class="btn btn-primary" value="Save"/>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+        </div>
+        <!--/row-->
+
+        <br> <br>
+
+
+    </div>
+    <br>
+
+{% endblock %}
