@@ -1,0 +1,13 @@
+{% for book in books %}
+    <h2>{{ book.title }}</h2>
+    <h3>
+        Shared by: <a href="/user/{{ book.uploader }}/" >{{ book.uploader }}</a> |
+        Uploaded date: {{ book.uploaded_date }}
+        {% if Book.public_share %}Sharing: Public
+        {% else %}Sharing: Private
+        {% endif %}
+    </h3>
+    <a href="/book_delete/{{ book.id }}"><input type="button" value="Delete"/></a>
+    {% block delete %}{% endblock %}
+    {% block sharing_change %}{% endblock %}
+{% endfor %}

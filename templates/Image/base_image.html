@@ -1,0 +1,28 @@
+{% for image in images %}
+    <h1> {{ image.title }}</h1>
+    <table>
+        <tr>
+            <th valign="top" style="padding: 8px 5px 2px 3px">
+                {% if image.image_file %}
+                    <a href="{{ image.image_file.url }}"> <img src="{{ image.image_file.url }}" width="100" alt="{{ image.image_file.url }}"/></a>
+                {% else %}
+                    <a href="{{ image.url }}"> <img src="{{ image.url }}" width="100" alt="{{ image.url }}"/></a>
+                {% endif %}
+            </th>
+            <td valign="top">
+                <h3>
+                    Shared by: <a href="/user/{{ image.uploader }}/" >You</a><br/>
+                    Uploaded date: {{ image.upload_date }}<br/>
+                    {% if image.public_share %}
+                        Sharing: Public
+                        <a href="/set_private/image/{{ image.id }}"><input type="button" value="Private"/></a>
+                    {% else %}
+                        Sharing: Private
+                        <a href="/set_public/image/{{ image.id }}"><input type="button" value="Public"/></a>
+                    {% endif %}
+                </h3>
+            </td>
+        </tr>
+    </table>
+    <a href="/image_delete/{{ image.id }}"><input type="button" value="Delete"/></a>
+{% endfor %}

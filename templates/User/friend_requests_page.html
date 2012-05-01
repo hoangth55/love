@@ -1,8 +1,18 @@
-{% for friend_request in friend_request_list %}
-    <div class="friend_request">
-        {{ friend_request.from_user }} wants to be friend with you
-        <a href="/user/{{ user.username }}/friend_accept?id={{ friend_request.from_user.id }}"><input type="button" value="Accept"></a>
-        <a href="/user/{{ user.username }}/friend_decline?id={{ friend_request.from_user.id }}"><input type="button" value="Decline"></a>
-    </div>
-    <br/>
-{% endfor %}
+{% extends "User/base_user_page.html" %}
+{% block title %}{% endblock %}
+{% block external %}{% endblock %}
+{% block base_user_content %}
+    {% if not friend_request_list %}
+        <h4>You have no friend request</h4>
+    {% else %}
+        <h4>You have {{ friend_request_list.count }} friend request(s)</h4>
+        {% for friend_request in friend_request_list %}
+            <div class="friend_request">
+                {{ friend_request.from_user }} wants to be friend with you
+                <a href="/user/{{ user.username }}/friend_accept?id={{ friend_request.from_user.id }}"><input type="button" value="Accept"></a>
+                <a href="/user/{{ user.username }}/friend_decline?id={{ friend_request.from_user.id }}"><input type="button" value="Decline"></a>
+            </div>
+            <br/>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

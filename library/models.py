@@ -1,10 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import User
 from datetime import *
+
+from django.db.models.signals import post_delete
+from django.core.files.storage import default_storage
+
 import os
 from easy_thumbnails.models import Thumbnail
 from easy_thumbnails import fields
 # Create your models here.
+
 
 def dynamic_upload(instance, filename):
     type=''
@@ -12,10 +17,10 @@ def dynamic_upload(instance, filename):
     if instance.__class__==Book:
         type='books'
         username=instance.uploader.username
-    if instance.__class__==Lib_Image:
+    if instance.__class__==Image:
         type='images'
         username=instance.uploader.username
-    if instance.__class__==User_Information:
+    if instance.__class__==User_Profile_Image:
         type='profile_images'
         username=instance.user.username
     if type :
@@ -32,56 +37,75 @@ class Book(models.Model):
     title=models.CharField(max_length=200)
     category=models.ForeignKey(Category)
     uploader=models.ForeignKey(User,related_name='book_list')
-    file=models.FileField(upload_to=dynamic_upload,blank=True)
-    thumbnail=fields.ThumbnailerField(upload_to='thumbnail',blank=True)
+    book_file=models.FileField(upload_to=dynamic_upload,blank=True)
+    #thumbnail=fields.ThumbnailerField(upload_to='thumbnail',blank=True)
     description=models.TextField(blank=True)
     upload_date=models.DateTimeField(auto_now_add=True)
     public_share=models.BooleanField(default=False)
-    read_count=models.IntegerField(default=0)
+    #read_count=models.IntegerField(default=0)
     def __str__(self):
-        return '%s,%s' %(self.title,self.uploader)
-    def num_downloader(self):
-        return self.downloader_set.count()
-    def num_reader(self):
-        return self.reader_set.count()
-    def num_voter(self):
-        return self.vote_set.count()
-    def book_size(self):
-        if self.file :
-            return self.file.size
-        else: return 0
-class Lib_Image(models.Model):
+        return '%s' %self.title
+
+def delete_filefield(sender, **kwargs):
+    book = kwargs.get('instance')
+    default_storage.delete(book.book_file.path)
+post_delete.connect(delete_filefield, Book)
+
+class Image(models.Model):
+    title=models.CharField(max_length=200)
     uploader=models.ForeignKey(User,related_name='image_list')
     image_file=models.ImageField(upload_to=dynamic_upload,blank=True)
     description=models.TextField(blank=True)
     upload_date=models.DateTimeField(auto_now_add=True)
     public_share=models.BooleanField(default=False)
-    url = models.URLField("URL",blank=True)
+    url = models.URLField(blank=True)
     def __unicode__(self):
-        return self.description
+        if self.image_file:
+            return '%s' %self.image_file.name
+        else :
+            return '%s' %self.url
+
+def delete_imagefield(sender, **kwargs):
+    image = kwargs.get('instance')
+    default_storage.delete(image.image_file.path)
+post_delete.connect(delete_imagefield, Image)
 
 class Video(models.Model):
+    title=models.CharField(max_length=200)
     uploader=models.ForeignKey(User,related_name='video_list')
     description=models.TextField(blank=True)
     upload_date=models.DateTimeField(auto_now_add=True)
     public_share=models.BooleanField(default=False)
-    url=models.URLField("URL",blank=True)
+    url=models.URLField()
+    #Youtube_video_id=models.CharField(max_length=20,blank=True)
     def __unicode__(self):
-        return self.description
+        return '%s' %self.url
 
+    def get_Youtube_video_id(self):
+        Youtube_video_id=str(self.url).split('/')[-1]
+        return Youtube_video_id
+
+class Book_Reading(models.Model):
+    reader=models.ForeignKey(User,related_name="read_book_set")
+    book=models.ForeignKey(Book,related_name="reader_set")
+
+class Image_Viewing(models.Model):
+    viewer=models.ForeignKey(User,related_name="viewed_image_set")
+    image=models.ForeignKey(Image,related_name="viewer_set")
+
+class Video_Watching(models.Model):
+    watcher=models.ForeignKey(User,related_name="watched_video_set")
+    video=models.ForeignKey(Video,related_name="watcher_set")
 
 class User_Information(models.Model):
     user=models.OneToOneField(User)
     first_name=models.CharField(max_length=200,blank=True)
     last_name=models.CharField(max_length=200,blank=True)
-    gender=models.IntegerField(max_length=1,default=1,blank=True)
+    gender=models.BooleanField(blank=True)
     birth_date=models.DateField(blank=True,null=True)
     about=models.TextField(blank=True)
+    avatar=models.IntegerField(blank=True)
 
-    image=models.ImageField(upload_to=dynamic_upload,blank=True,null=True)
-
-    read_books=models.ManyToManyField(Book,related_name='reader_set')
-    downloaded_books=models.ManyToManyField(Book,related_name='downloader_set')
     def __str__(self):
         return '%s %s' %(self.first_name,self.last_name)
 
@@ -89,6 +113,10 @@ class User_Information(models.Model):
         age=0
         if self.birth_date: age=datetime.now().year-self.birth_date.year
         return age
+
+class User_Profile_Image(models.Model):
+    user=models.ForeignKey(User,related_name="profile_image_set")
+    profile_image=models.ImageField(upload_to=dynamic_upload)
 
 class Vote(models.Model):
     book=models.ForeignKey(Book)
@@ -137,7 +165,7 @@ class Forum(models.Model):
 
 class Thread(models.Model):
     title=models.CharField(max_length=200)
-    created=models.DateTimeField(blank=True)
+    created=models.DateTimeField(blank=True,auto_now_add=True)
     creator=models.ForeignKey(User,blank=True,null=True)
     forum=models.ForeignKey(Forum)
 
@@ -167,7 +195,7 @@ class Thread_Participant(models.Model):
 
 class Post(models.Model):
     #title = models.CharField(max_length=60)
-    created = models.DateTimeField(blank=True)
+    created = models.DateTimeField(blank=True,auto_now_add=True)
     creator = models.ForeignKey(User,blank=True,null=True)
     thread = models.ForeignKey(Thread)
     content = models.TextField(max_length=1000,blank=True)
@@ -179,14 +207,3 @@ class Post(models.Model):
     def short(self):
         return u"%s\n%s" % (self.creator, self.created.strftime("%b %d, %I:%M %p"))
     short.allow_tags = True
-'''
-class Friend_Request(models.Model):
-    to_user=models.ForeignKey(User,related_name="friend_response_list")
-    from_user=models.ForeignKey(User,re)
-'''
-'''
-class Notification(models.Model):
-    to_thread=models.IntegerField(max_length=4)
-    from_user=models.IntegerField(max_length=4)
-    post_id=models.IntegerField(max_length=4)
-'''

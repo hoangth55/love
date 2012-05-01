@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Videos{% endblock %}
+{% block content %}
+    {% for video in videos %}
+		<h1> {{ video.description }}</h1>
+		<iframe width="350" height="350" src="{{ video.url }}" frameborder="0"></iframe>
+		<h3> Shared by: <a href="/user/{{ video.uploader }}/" >{{ video.uploader }}</a> / Uploaded date: {{ video.upload_date }}</h3>
+    {% endfor %}
+{% endblock %}

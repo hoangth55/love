@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Profile Image Upload{% endblock %}
+{% block content %}
+
+    {% if img %}
+        {# <img src="#" alt="Profile Picture" width="200px" height="200px"/> #}
+        {% load thumbnail %}
+        <img src="{% thumbnail img 200x200 crop quality=90 %}"/>
+    {% endif %}
+    <form enctype="multipart/form-data" method="post" action=".">
+        <table>
+            {% csrf_token %}
+            {{ form.as_table }}
+        </table>
+        <input type="submit" value="Change Picture"/>
+    </form>
+    Status: {{ status }}
+{% endblock %}

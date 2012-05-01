@@ -1,10 +1,20 @@
-{% for posts in total_notifications %}
-    {% for post in posts %}
-        <div class="notification">
-            {{ post.creator }} has posted in {{ post.thread }}:<br/>
-            {{ post.content }}<br/>
-            {{ post.created }}
-        </div>
-        <br/>
-    {% endfor  %}
-{% endfor %}
+{% extends "User/base_user_page.html" %}
+{% block title %}{% endblock %}
+{% block external %}{% endblock %}
+{% block base_user_content %}
+    {% if not total_notifications %}
+        <h4>You have no notification</h4>
+    {% else %}
+        <h4>You have {{ total_notifications.count }} notification(s)</h4>
+        {% for posts in total_notifications %}
+            {% for post in posts %}
+                <div class="notification">
+                    {{ post.creator }} has posted in {{ post.thread }}:<br/>
+                    {{ post.content }}<br/>
+                    {{ post.created }}
+                </div>
+                <br/>
+            {% endfor  %}
+        {% endfor %}
+    {% endif %}
+{% endblock %}

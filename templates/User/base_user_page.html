@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% block title %}{% endblock %}
+{% block external %}{% endblock %}
+{% block content %}
+
+    {% if profile_image_status == 0 %}
+        <img src="/site_media/img/user_images/male_user.png" alt="Male User Image"/>
+    {% else %}
+        {% if profile_image_status == 1 %}
+            <img src="/site_media/img/user_images/female_user.png" alt="Male User Image"/>
+        {% else %}
+        {% endif %}
+    {% endif %}
+
+    <div class="navbar-inner-background">
+
+        <div class="row-fluid">
+            <div class="span3">
+                <div class="well sidebar-nav">
+                    <ul class="nav nav-list">
+                        <li class="active"><a href="#">Your account</a></li>
+                        <li class="divider"></li>
+                        <img id="avatar" src="http://u.ph.edim.co/default-avatars/default_avatar.png">
+                        <a id="avatarName" href="/user/{{ user.username }}">{{ user.username }}</a><br>
+
+
+                        <li class="active"><a href="#">Other</a></li>
+                        <li class="divider"></li>
+
+                        <input id="upload_button" type="button" name="upload" value="Upload"/>
+                        <div id="upload_select_table" style="width:200px;height:100px;background-color:brown;display:none">
+                            <a href="/upload/book" >Book Upload</a>
+                            <a href="/upload/image" >Image Upload</a>
+                            <a href="/upload/image_link" >Image Link Upload</a>
+                            <a href="/upload/video_link" >Video Link Upload</a>
+                        </div>
+                        <script type="text/javascript">
+                            $("#upload_button").click(function(){
+                                var select_table=$("#upload_select_table");
+                                if(select_table.css("display")=="none") {select_table.fadeIn();}
+                                else {select_table.fadeOut();}
+                            })
+                        </script>
+
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Upload files <b
+                                    class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="/upload/book">Book Upload</a></li>
+                                <li><a href="/upload/image">Image Upload</a></li>
+                                <li><a href="/upload/image_link">Image Link Upload</a></li>
+                                <li><a href="/upload/video">Video Upload</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="/library/{{ user.username }}">Library</a></li>
+                        <li><a href="#">Link</a></li>
+
+                    </ul>
+                </div>
+                <br><br>
+
+                <div class="well sidebar-nav">
+                    <ul class="nav nav-list">
+                        <h1>Friends</h1>
+                        <div class="pas">
+                            <table class="uiGrid mbs mrs typeaheadContainer" cellspacing="0" cellpadding="0">
+                                <tbody>
+                                <tr>
+                                    <td>
+                                        <br>
+                                        <div class="uiTypeahead uiClearableTypeahead fbChatTypeahead typeahead"
+                                             id="ulkm9a_67" aria-expanded="false">
+                                            <div class="innerWrap"><input type="text"
+                                                                          class="inputtext inputsearch textInput DOMControl_placeholder"
+                                                                          autocomplete="off"
+                                                                          placeholder="Friends on Chat"
+                                                                          onfocus="return wait_for_load(this, event, function() {;JSCC.get('j5GxB6neNN0EaUl2jM1').init([&quot;chatTypeahead&quot;,&quot;buildBestAvailableNames&quot;,&quot;showLoadingIndicator&quot;]);;});"
+                                                                          aria-autocomplete="list"
+                                                                          aria-expanded="false" aria-invalid="false"
+                                                                          aria-owns="typeahead_list_ulkm9a_67"
+                                                                          role="textbox" spellcheck="false"
+                                                                          value="Friends on Chat"
+                                                                          title="Friends on Chat"></div>
+
+                                        </div>
+                                        <br>
+                                    </td>
+
+                                </tr>
+                                </tbody>
+                            </table>
+                            <div class="uiFacepile fbFriendsOnlineFacepile uiFacepileMedium" id="ulkm9a_68">
+                                <ul class="uiList uiListHorizontal clearfix">
+                                    <li class="uiFacepileItem uiListItem uiListHorizontalItemBorder uiListHorizontalItem chatOnline">
+                                        <a data-hover="tooltip" title="Trương Huy Hoàng" class="link" href="#"><img
+                                                class="uiProfilePhoto uiProfilePhotoMedium img"
+                                                src="https://fbcdn-profile-a.akamaihd.net/hprofile-ak-snc4/173633_100001845981608_51135381_q.jpg"
+                                                alt="">
+
+                                            <div class="chatStatus"></div>
+                                        </a></li>
+
+                                </ul>
+                            </div>
+                        </div>
+                    </ul>
+                </div>
+                <!--/.well -->
+            </div>
+            <!--/span-->
+
+            <div class="span7">
+                <ul class="breadcrumb">
+                    <ul id="tab" class="nav nav-tabs">
+                        <li class=""><a href="/user/{{ user.username }}/books">Books</a></li>
+                        <li class=""><a href="/user/{{ user.username }}/videos">Videos</a></li>
+                        <li class=""><a href="/user/{{ user.username }}/images">Images</a></li>
+
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Media <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="/videos">Videos</a></li>
+                                <li><a href="/images">Images</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                </ul>
+
+                <div class="modal" style="position: relative; top: auto; left: auto; margin: 0 auto; z-index: 1">
+                    <div class="modal-body">
+                        {% block base_user_content %}There is nothing here {% endblock %}
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+
+            </div>
+            <!--/span-->
+
+            <div class="span2">
+                <div class="well sidebar-nav">
+                    <ul class="nav nav-list">
+                        <li class="active"><a href="#">Action</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">Add</a></li>
+                        <li><a href="#">Delete</a></li>
+                        <li><a href="#">Upgrade</a></li>
+                        <li class="active"><a href="#">Other</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">Link</a></li>
+                        <li><a href="#">Link</a></li>
+                    </ul>
+                </div>
+                <!--/.well -->
+            </div>
+            <!--/span-->
+        </div>
+        <!--/row-->
+
+        <br> <br>
+    </div>
+    <br>
+
+{% endblock %}

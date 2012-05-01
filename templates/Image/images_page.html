@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Images{% endblock %}
+{% block content %}
+    {% for image in images %}
+		<h1> {{ image.description }}</h1>
+		<a href="{{ image.url }}"> <img src="{{ image.url }}" height="100" width="130" /></a>
+		<h3> Shared by: <a href="/user/{{ image.uploader }}/" >{{ image.uploader }}</a> / Uploaded date: {{ image.upload_date }}</h3>
+    {% endfor %}
+{% endblock %}

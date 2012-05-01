@@ -1,11 +1,8 @@
 import re
 from django import forms
-from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from library.models import *
-from django.forms import ModelForm
 from django.utils.safestring import mark_safe
-from django.forms.widgets import *
 
 class LoginForm(forms.Form):
     username=forms.CharField(label='Username',max_length=200)
@@ -41,19 +38,15 @@ class RegistrationForm(forms.Form):
             return username
         raise forms.ValidationError('Username is already taken.')
 
-class UploadFileForm(forms.Form):
+class UploadBookForm(forms.Form):
     title=forms.CharField(
         label='Title',max_length=200,
-        #widget=forms.TextInput(attrs={'size':80})
     )
-
-    up_file=forms.FileField(
-        label='File URL',
-    )
-
+    up_file=forms.FileField(label='Book URL',)
     description=forms.Field(
         widget=forms.Textarea(),
         label='Description',
+        required=False,
     )
     category=forms.ModelChoiceField(
         queryset=Category.objects.all(),
@@ -79,6 +72,7 @@ class HorizRadioRenderer(forms.RadioSelect.renderer):
     def render(self):
         """Outputs radios"""
         return mark_safe(u'\n'.join([u'%s\n' % w for w in self]))
+
 GENDER_CHOICES=[('m','Male'),('f','Female')]
 class UserInfoForm(forms.Form):
     first_name=forms.CharField(label='First name',max_length=200,required=False,)
@@ -125,8 +119,22 @@ class PasswordChangeForm(forms.Form):
         label='Confirm New Password',
         widget=forms.PasswordInput(),
     )
+    '''
+    def clean_old_password(self):
+        if 'old_password' in self.cleaned_data:
+            return self.cleaned_data['old_password']
+        else :
+            raise forms.ValidationError('You must type your old password.')
+        '''
+    '''
+    def clean_new_password1(self):
+        if new_password1 in self.cleaned_data:
+            return self.cleaned_data['new_password1']
+        else :
+            raise forms.ValidationError('You must type your new password.')
+        '''
     def clean_new_password2(self):
-        if 'password1' in self.cleaned_data:
+        if 'new_password1' in self.cleaned_data:
             new_password1 = self.cleaned_data['new_password1']
             new_password2 = self.cleaned_data['new_password2']
             if new_password1 == new_password2:
@@ -166,53 +174,73 @@ class NewThreadForm(forms.Form):
         max_length=200,
         label='Subject',
     )
-	
-class AddVideoForm(forms.Form):
-    url=forms.URLField(
-        max_length=300,
-        label='URL',
+
+
+class UploadVideoLinkForm(forms.Form):
+    title=forms.CharField(label='Title',max_length=200)
+    link=forms.URLField(
+        label='Video Link',
+        widget=forms.TextInput(attrs={'value':"http://",})
     )
     description=forms.Field(
-        widget=forms.Textarea(),
+        widget=forms.Textarea(attrs={'cols':50,}),
         label='Description',
+        required=False,
     )
     public_share=forms.BooleanField(
         initial=False, required=False,
         label='Public Sharing',
     )
 
-    url.widget.attrs['size']=54
-    url.widget.attrs['value']="http://"
-	
 class UploadImageForm(forms.Form):
+    title=forms.CharField(label='Title',max_length=200)
     up_file=forms.ImageField(
         label='Image URL',
     )
-
     description=forms.Field(
-        widget=forms.Textarea(),
+        widget=forms.Textarea(attrs={'cols':50,}),
         label='Description',
-    )
-    public_share=forms.BooleanField(
-        initial=False, required=False,
-        label='Public Sharing',
-    )
-    up_file.widget.attrs['size']=55
-    description.widget.attrs['cols']=50
-
-class AddImageLinkForm(forms.Form):
-    url=forms.URLField(
-        max_length=300,
-        label='URL',
-    )
-    description=forms.Field(
-        widget=forms.Textarea(),
-        label='Description',
+        required=False
     )
     public_share=forms.BooleanField(
         initial=False, required=False,
         label='Public Sharing',
     )
 
-    url.widget.attrs['size']=54
-    url.widget.attrs['value']="http://"
+class UploadImageLinkForm(forms.Form):
+    title=forms.CharField(label='Title',max_length=200)
+    link=forms.URLField(
+        label='Image Link',
+        widget=forms.TextInput(attrs={'value':"http://",})
+    )
+    description=forms.Field(
+        widget=forms.Textarea(attrs={'cols':50,}),
+        label='Description',
+        required=False,
+    )
+    public_share=forms.BooleanField(
+        initial=False, required=False,
+        label='Public Sharing',
+    )
+    #link.widget.attrs['value']="http://"
+
+class SearchForm(forms.Form):
+    query=forms.CharField(
+        label='',
+        widget=forms.TextInput(attrs={'size':50,'value':'Enter a keyword'})
+    )
+    book_search=forms.BooleanField(
+        label='Books',
+        widget=forms.CheckboxInput(),
+        initial=False,
+    )
+    image_search=forms.BooleanField(
+        label='Images',
+        widget=forms.CheckboxInput(),
+        initial=False,
+    )
+    video_search=forms.BooleanField(
+        label='Videos',
+        widget=forms.CheckboxInput(),
+        initial=False,
+    )

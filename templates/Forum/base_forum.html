@@ -1,0 +1,149 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="/site_media/bootstrap/css/bootstrap.css"/>
+    <link rel="stylesheet" href="/site_media/bootstrap/css/bootstrap-responsive.css"/>
+    <link rel="stylesheet" href="/site_media/css/general-v2.css"/>
+    <script type="text/javascript" src="/site_media/bootstrap/js/bootstrap-dropdown.js"></script>
+    <script type="text/javascript" src="/site_media/javascript/jquery.js"></script>
+    {% block external %}{% endblock %}
+</head>
+<body>
+<div class="navbar">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="brand" href="/">
+                Forum
+            </a>
+            <ul class="nav">
+                <li><a href="/user/{{ user.username }}/"  class="active" >Main</a>
+                </li>
+                <li>
+                    <a href="/forum/">Home</a>
+                </li>
+                <li>
+                    <a href="help.htm">Help</a>
+                </li>
+            </ul>
+            <form class="navbar-search pull-left" action="">
+                <input type="text" class="search-query span2" placeholder="Search">
+            </form>
+            <ul class="nav pull-right">
+                {% if user.is_authenticated %}
+                    <li>
+                        <div id="userbox">
+                            <div id="user">
+                                <a href="/user/{{ user.username }}/"><img height="20" src="https://secure.gravatar.com/avatar/7df2dd149dfd65e036773d51b1978f69?s=140&amp;d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-140.png" width="20"></a>
+                                <a href="/user/{{ user.username }}/"  class="name"><h7-color>{{ user.username }}</h7-color></a>
+                            </div>
+                            <ul id="user-links">
+                                <li>
+                                    <a href="/user/{{ user.username }}/notifications/" id="notifications" class="tooltipped downwards" original-title="Notifications">
+                                        <span class="mini-icon notifications"></span>
+                                        <span class="unread_count">2</span>
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </div>
+                        <li>
+                            <a href="/accounts/logout/">Logout</a>
+                        </li>
+                    </li>
+
+                {% else %}
+                    <li>
+                        <a href="/accounts/login">Login</a>
+                    </li>
+                {% endif %}
+            </ul>
+
+        </div>
+    </div>
+</div>
+<div class="navbar-inner-background">
+<div class="row-fluid">
+<div class="span3">
+    <div class="well" style="padding: 8px 0;">
+        <ul class="nav nav-list">
+            <li class="nav-header">
+                Group4
+            </li>
+            <li class="active">
+                <a href="/forum/"><i class="icon-white icon-home"></i> Home</a>
+            </li>
+            <li>
+                <a href="#"><i class="icon-book"></i> Projects</a>
+            </li>
+            <li>
+                <a href="#"><i class="icon-check"></i> Tasks</a>
+            </li>
+            <li>
+                <a href="#"><i class="icon-envelope"></i> Messages</a>
+            </li>
+            <li>
+                <a href="#"><i class="icon-file"></i> Files</a>
+            </li>
+            <li>
+                <a href="#"><i class="icon-list-alt"></i> Activity</a>
+            </li>
+            <li class="nav-header">
+                Your Account
+            </li>
+            <li>
+                <a href="/user/{{ user.username }}/profile/"><i class="icon-user"></i> Profile</a>
+            </li>
+            <li>
+                <a href="/user/{{ user.username }}/profile_config/"><i class="icon-cog"></i> Settings</a>
+            </li>
+            <li class="divider">
+            </li>
+            <li>
+                <a href="help.htm"><i class="icon-info-sign"></i> Help</a>
+            </li>
+            <li class="nav-header">
+                Bonus Templates
+            </li>
+            <li>
+                <a href="gallery.htm"><i class="icon-picture"></i> Gallery</a>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="span9">
+    {% block content %} {% endblock %}
+
+</div>
+</div>
+</div>
+<hr>
+<div class="well">
+    <div id="footer">
+        <div id="fixed-width">
+            <div id="footer_links">
+                <div id="footer_links">
+                    <ul>
+                        <li class="first"><a href="#">Copyright Statement</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Site
+                            Help</a></li>
+                        <li class="last"><a href="#">Site Index</a></li>
+                    </ul>
+                </div>
+                <div id="footer-copyright">© 1997–2012 Glory Library Association</div>
+            </div>
+            <div class="contact">
+                <h2><img src="/site_media/img/user_images/edmodo-logo.png"
+                         alt="American Library Association" width="192" height="13"></h2>
+
+                <p>144 Xuan Thuy St., Cau giay district, Ha Noi, VN |
+                    <span class="skype_pnh_print_container_1332123927">1.800.545.2433</span><span
+                            class="skype_pnh_container" dir="ltr" tabindex="-1"><span class="skype_pnh_mark"></span></span>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,23 +1,31 @@
-<!-- Forums  -->
+{% extends "forum/base_forum.html" %}
+{% block title %} Main page of forum {% endblock %}
+{% block content %}
 <div id="list">
-    <table border="1px black solid" cellpadding="4" width="100%">
+    <h1>
+        Forum
+    </h1>
+    <table class="table table-bordered table-striped">
+        <thead>
         <tr>
-            <td></td>
-            <td>Posts</td>
-            <td>Last post</td>
-            <td></td>
+            <th> User </th>
+            <th> Posts</th>
+            <th> Last posts</th>
+            <th> View</th>
         </tr>
+        </thead>
 
         {% for forum in forums %}
             <tr>
                 <td>{{ forum.title }}</td>
                 <td>{{ forum.num_threads }}</td>
                 <td>{{ forum.last_post.short|linebreaksbr }}</td>
-                <td >
-                    <a class="button" href="/forum/{{ forum.id }}/">VIEW</a>
+                <td>
+                    <a class="button" href="/forum/{{ forum.id }}/">View</a>
                 </td>
             </tr>
 
         {% endfor %}
     </table>
 </div>
+{% endblock %}

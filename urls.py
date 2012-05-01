@@ -24,13 +24,18 @@ urlpatterns = patterns('',
     url(r'^$',main_page),
 
     #Login , logout ,register
-    url(r'^logout/$',logout),
+    url(r'^accounts/login/$',login),
+    url(r'^accounts/logout/$',logout),
     url(r'^register/$',register),
     #User page
     url(r'^user/(\w+)/$',user_page),
     url(r'^user/(\w+)/profile/$',user_profile),
     url(r'^user/(\w+)/profile_config/$',user_profile_config),
     url(r'^user/(\w+)/profile_image_change/$',user_profile_image_change),
+    url(r'^user/(\w+)/password_change/$',user_password_change),
+    url(r'^user/(\w+)/books',user_book_page),
+    url(r'^user/(\w+)/images',user_image_page),
+    url(r'^user/(\w+)/videos',user_video_page),
 
     #Notifications
     url(r'^user/(\w+)/notifications/$',get_notifications),
@@ -41,21 +46,28 @@ urlpatterns = patterns('',
     url(r'^user/(\w+)/friend_decline/$',decline_friend),
 
     #Library
-    url(r'^books/$',books),
     url(r'^library/$',library),
     url(r'^library/(\w+)/$',category),
     url(r'^library/(\w+)/(\d+)',book_page),
+    url(r'^library/images/$',image_page),
+    url(r'^library/videos/$',video_page),
 
     #Delete
-    url(r'^book_delete/(\d+)',delete_book),
-    url(r'^image_delete/(\d+)',delete_image),
-    url(r'^video_delete/(\d+)',delete_video),
+    url(r'^book_delete/(\d+)/$',delete_book),
+    url(r'^image_delete/(\d+)/$',delete_image),
+    url(r'^video_delete/(\d+)/$',delete_video),
+
+    #Sharing
+    url(r'^set_public/(\w+)/(\d+)/$',set_public_media_object),
+    url(r'^set_private/(\w+)/(\d+)/$',set_private_media_object),
+
 
     #Test cloud
-    url(r'^tag_cloud/$',tag_cloud),
+    #url(r'^tag_cloud/$',tag_cloud),
 
+    #Upload
     url(r'^upload/(\w+)/$',file_upload),
-    url(r'^upload/success/$',file_upload_success),
+    #url(r'^upload/success/$',file_upload_success),
     url(r'^download/(\d+)/$',file_download),
 
     url(r'^pdf_display/$',direct_to_template,{'template':'pdf_display.html'}),
@@ -70,14 +82,17 @@ urlpatterns = patterns('',
 
     #Vote
     url(r'vote/$',save_vote),
-	
-	#Video
-	url(r'^video/success/$',AddVideoSuccess),
-    url(r'^video/$',VideoPage),
-	#Image
-    url(r'^image/upload/$',uploadImage),
-    url(r'^image/add/$',addImage),
-    url(r'^image/success/$',ImageDone),
-    url(r'^image/$',ImagePage),
+
+
+    #Video
+    #url(r'^video/success/$',AddVideoSuccess),
+
+    #Image
+    url(r'^image/upload/$',image_upload),
+    url(r'^image/add/$',image_link_upload),
+    #url(r'^image/success/$',ImageDone),
+
+    #url(r'^search/$',search),
+
 
 )

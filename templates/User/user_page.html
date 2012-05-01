@@ -1,0 +1,36 @@
+{% extends "User/base_user_page.html" %}
+{% block external %}
+
+{% endblock %}
+{% block base_user_content %}
+
+{% if is_user %}
+    <h2>Notifications</h2>
+    <h2><a href="/user/{{ user.username }}/friend_requests">Friend Requests</a></h2>
+
+    {% if profile_image_status == 0 %}
+        <img src="/site_media/img/user_images/male_user.png" alt="Male User Image"/>
+    {% else %}
+    {% if profile_image_status == 1 %}
+        <img src="/site_media/img/user_images/female_user.png" alt="Male User Image"/>
+    {% else %}
+    {% endif %}
+    {% endif %}
+
+{% else %}
+    Ten: {{ other_user.username }}<br/>
+    {% if not is_friend %}
+        {% if not is_friend_request %}
+            <a href="/make_friend?id={{ other_user.id }}">
+                <input type="button" value="Make Friend"/>
+            </a>
+        {% else %}
+            You have requested to be friend with {{ other_user.username }}
+        {% endif %}
+    {% else %}
+        You are friend with {{ other_user.username }}
+    {% endif %}
+
+{% endif %}
+
+{% endblock %}
