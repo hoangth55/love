@@ -2,15 +2,15 @@
     <div class="pagination">
         <span class="step-links">
         {% if object_holder.has_previous %}
-            <a href= "?page={{ object_holder.previous_page_number }}">Previous &lt;&lt; </a>
+            <a href= "?page={{ object_holder.previous_page_number }}">previous &lt;&lt; </a>
         {% endif %}
 
             <span class="current">
             &nbsp;Page {{ object_holder.number }} of {{ object_holder.paginator.num_pages }}
-            </span>
+        </span>
 
             {% if object_holder.has_next %}
-                <a href="?page={{ object_holder.next_page_number }}"> &gt;&gt; Next</a>
+                <a href="?page={{ object_holder.next_page_number }}"> &gt;&gt; next</a>
             {% endif %}
         </span>
     </div>

@@ -1,4 +1,5 @@
 {% extends "User/base_user_page.html" %}
+{% block external %}{% endblock %}
 {% block title %}{{ user.username }}|Images{% endblock %}
 {% block base_user_content %}
     {% if not images.object_list.count%}
@@ -7,32 +8,34 @@
         <h3>You have uploaded {{ images.object_list.count }} image(s)</h3>
 
         {% for image in images.object_list %}
-            <h2> {{ image.title }}</h2>
-            <table border="1px black solid">
-                <tr>
-                    <th valign="top" style="padding: 8px 5px 5px 5px">
-                        {% if image.image_file %}
-                            <a href="{{ image.image_file.url }}"> <img src="{{ image.image_file.url }}" width="100" alt="{{ image.image_file.url }}"/></a>
-                        {% else %}
-                            <a href="{{ image.url }}"> <img src="{{ image.url }}" width="100" alt="{{ image.url }}"/></a>
-                        {% endif %}
-                    </th>
-                    <td valign="top" style="padding: 2px 5px 5px 5px">
-                        <h3>
-                            Shared by: <a href="/user/{{ image.uploader }}/" >You</a><br/>
-                            Uploaded date: {{ image.upload_date }}<br/>
-                            {% if image.public_share %}
-                                Sharing: Public
-                                <a href="/set_private/image/{{ image.id }}"><input type="button" value="Private"/></a>
+            <div class="media_object_list">
+                <h2><a href="/image/{{ image.id }}">{{ image.title }}</a></h2>
+                <table border="1px black solid">
+                    <tr>
+                        <th valign="top" style="padding: 8px 5px 5px 5px">
+                            {% if image.image_file %}
+                                <a href="/image/{{ image.id }}"> <img src="{{ image.image_file.url }}" width="100" alt="{{ image.image_file.url }}"/></a>
                             {% else %}
-                                Sharing: Private
-                                <a href="/set_public/image/{{ image.id }}"><input type="button" value="Public"/></a>
+                                <a href="/image/{{ image.id }}"> <img src="{{ image.url }}" width="100" alt="{{ image.url }}"/></a>
                             {% endif %}
-                        </h3>
-                    </td>
-                </tr>
-            </table>
-            <a href="/image_delete/{{ image.id }}"><input type="button" value="Delete"/></a>
+                        </th>
+                        <td valign="top" style="padding: 2px 5px 5px 5px">
+                            <h3>
+                                Shared by: <a href="/user/{{ image.uploader }}/" >You</a><br/>
+                                Uploaded date: {{ image.upload_date }}<br/>
+                                {% if image.public_share %}
+                                    Sharing: Public
+                                    <a href="/set_private/image/{{ image.id }}"><input type="button" value="Private"/></a>
+                                {% else %}
+                                    Sharing: Private
+                                    <a href="/set_public/image/{{ image.id }}"><input type="button" value="Public"/></a>
+                                {% endif %}
+                            </h3>
+                        </td>
+                    </tr>
+                </table>
+                <a href="/image_delete/{{ image.id }}"><input type="button" value="Delete"/></a>
+            </div>
         {% endfor %}
 
         {# --------Phan trang------- #}

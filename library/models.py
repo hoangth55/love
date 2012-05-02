@@ -4,10 +4,6 @@ from datetime import *
 
 from django.db.models.signals import post_delete
 from django.core.files.storage import default_storage
-
-import os
-from easy_thumbnails.models import Thumbnail
-from easy_thumbnails import fields
 # Create your models here.
 
 
@@ -28,25 +24,25 @@ def dynamic_upload(instance, filename):
     else :
         return '/'.join([username, filename])
 
+'''
 class Category(models.Model):
     name=models.CharField(max_length=200)
     def __str__(self):
         return '%s' %self.name
-
+'''
 class Book(models.Model):
     title=models.CharField(max_length=200)
-    category=models.ForeignKey(Category)
     uploader=models.ForeignKey(User,related_name='book_list')
     book_file=models.FileField(upload_to=dynamic_upload,blank=True)
-    #thumbnail=fields.ThumbnailerField(upload_to='thumbnail',blank=True)
     description=models.TextField(blank=True)
     upload_date=models.DateTimeField(auto_now_add=True)
     public_share=models.BooleanField(default=False)
-    #read_count=models.IntegerField(default=0)
-    def __str__(self):
-        return '%s' %self.title
+    voters=models.ManyToManyField(User,related_name="voted_book_set")
+    viewers=models.ManyToManyField(User,related_name="viewed_book_set")
+    def __unicode__(self):
+        return '%s' %self.book_file.name
 
-def delete_filefield(sender, **kwargs):
+def delete_filefield(**kwargs):
     book = kwargs.get('instance')
     default_storage.delete(book.book_file.path)
 post_delete.connect(delete_filefield, Book)
@@ -59,13 +55,15 @@ class Image(models.Model):
     upload_date=models.DateTimeField(auto_now_add=True)
     public_share=models.BooleanField(default=False)
     url = models.URLField(blank=True)
+    voters=models.ManyToManyField(User,related_name="voted_image_set")
+    viewers=models.ManyToManyField(User,related_name="viewed_image_set")
     def __unicode__(self):
         if self.image_file:
             return '%s' %self.image_file.name
         else :
             return '%s' %self.url
 
-def delete_imagefield(sender, **kwargs):
+def delete_imagefield(**kwargs):
     image = kwargs.get('instance')
     default_storage.delete(image.image_file.path)
 post_delete.connect(delete_imagefield, Image)
@@ -77,14 +75,15 @@ class Video(models.Model):
     upload_date=models.DateTimeField(auto_now_add=True)
     public_share=models.BooleanField(default=False)
     url=models.URLField()
-    #Youtube_video_id=models.CharField(max_length=20,blank=True)
+    voters=models.ManyToManyField(User,related_name="voted_video_set")
+    viewers=models.ManyToManyField(User,related_name="viewed_video_set")
     def __unicode__(self):
         return '%s' %self.url
 
     def get_Youtube_video_id(self):
         Youtube_video_id=str(self.url).split('/')[-1]
         return Youtube_video_id
-
+'''
 class Book_Reading(models.Model):
     reader=models.ForeignKey(User,related_name="read_book_set")
     book=models.ForeignKey(Book,related_name="reader_set")
@@ -96,7 +95,7 @@ class Image_Viewing(models.Model):
 class Video_Watching(models.Model):
     watcher=models.ForeignKey(User,related_name="watched_video_set")
     video=models.ForeignKey(Video,related_name="watcher_set")
-
+'''
 class User_Information(models.Model):
     user=models.OneToOneField(User)
     first_name=models.CharField(max_length=200,blank=True)
@@ -104,10 +103,12 @@ class User_Information(models.Model):
     gender=models.BooleanField(blank=True)
     birth_date=models.DateField(blank=True,null=True)
     about=models.TextField(blank=True)
-    avatar=models.IntegerField(blank=True)
+    avatar=models.IntegerField(blank=True,null=True)
 
-    def __str__(self):
-        return '%s %s' %(self.first_name,self.last_name)
+    def __unicode__(self):
+        if self.first_name and self.last_name:
+            return '%s %s' %(self.first_name,self.last_name)
+        else: return '%s' %self.user.username
 
     def get_age(self):
         age=0
@@ -117,13 +118,6 @@ class User_Information(models.Model):
 class User_Profile_Image(models.Model):
     user=models.ForeignKey(User,related_name="profile_image_set")
     profile_image=models.ImageField(upload_to=dynamic_upload)
-
-class Vote(models.Model):
-    book=models.ForeignKey(Book)
-    voter=models.ForeignKey(User)
-    vote_date=models.DateTimeField(auto_now_add=True)
-    def __str__(self):
-        return 'Vote for: %s from %s' %(self.book.title,self.voter.username)
 
 class Friend(models.Model):
     host=models.ForeignKey(User,related_name="friend_list",db_column="host_user_id")

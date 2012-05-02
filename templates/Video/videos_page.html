@@ -1,9 +1,27 @@
 {% extends "base.html" %}
 {% block title %}Videos{% endblock %}
 {% block content %}
-    {% for video in videos %}
-		<h1> {{ video.description }}</h1>
-		<iframe width="350" height="350" src="{{ video.url }}" frameborder="0"></iframe>
-		<h3> Shared by: <a href="/user/{{ video.uploader }}/" >{{ video.uploader }}</a> / Uploaded date: {{ video.upload_date }}</h3>
+    {% for video in videos.object_list %}
+        <div class="media_object_list">
+            <h2> <a href="/video/{{ video.id }}">{{ video.title }}</a></h2>
+            <table>
+                <tr>
+                    <th valign="top" style="padding: 8px 5px 5px 5px">
+                        <a href="/video/{{ video.id }}"><img class="video_thumbnail" src="http://img.youtube.com/vi/{{ video.get_Youtube_video_id }}/2.jpg" alt="http://img.youtube.com/vi/{{ video.get_Youtube_video_id }}/2.jpg"/></a>
+                    </th>
+                    <td valign="top" style="padding: 2px 5px 5px 5px">
+                        <h3>
+                            Shared by: <a href="/user/{{ video.uploader }}/" >{{ video.uploader }}</a><br/>
+                            Uploaded date: {{ video.upload_date }}<br>
+                            {% if video.public_share %}
+                                Sharing: Public
+                            {% else %}
+                                Sharing: Private
+                            {% endif %}
+                        </h3>
+                    </td>
+                </tr>
+            </table>
+        </div>
     {% endfor %}
 {% endblock %}

@@ -1,0 +1,11 @@
+#user_button_group{
+
+}
+#user_button_group #user_button{
+    width:60px;
+    height:18px;
+}
+#user_button_group #user_dropdown{
+    width:10px;
+    height:18px;
+}

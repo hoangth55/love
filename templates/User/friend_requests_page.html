@@ -1,6 +1,6 @@
 {% extends "User/base_user_page.html" %}
-{% block title %}{% endblock %}
 {% block external %}{% endblock %}
+{% block title %}{{ user.username }}|Friend Requests{% endblock %}
 {% block base_user_content %}
     {% if not friend_request_list %}
         <h4>You have no friend request</h4>

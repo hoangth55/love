@@ -38,32 +38,44 @@ class RegistrationForm(forms.Form):
             return username
         raise forms.ValidationError('Username is already taken.')
 
+class PasswordChangeForm(forms.Form):
+    old_password=forms.CharField(
+        label='Old Password',
+        widget=forms.PasswordInput(),
+    )
+    new_password1=forms.CharField(
+        label='New Password',
+        widget=forms.PasswordInput(),
+    )
+    new_password2=forms.CharField(
+        label='Confirm New Password',
+        widget=forms.PasswordInput(),
+    )
+
+    def clean_new_password2(self):
+        if 'new_password1' in self.cleaned_data:
+            new_password1 = self.cleaned_data['new_password1']
+            new_password2 = self.cleaned_data['new_password2']
+            if new_password1 == new_password2:
+                return new_password2
+        raise forms.ValidationError('New passwords do not match.')
+
+
 class UploadBookForm(forms.Form):
     title=forms.CharField(
         label='Title',max_length=200,
+        widget=forms.TextInput(attrs={'size':50,})
     )
     up_file=forms.FileField(label='Book URL',)
     description=forms.Field(
-        widget=forms.Textarea(),
+        widget=forms.Textarea(attrs={'cols':50,}),
         label='Description',
         required=False,
-    )
-    category=forms.ModelChoiceField(
-        queryset=Category.objects.all(),
-        label='Category',
-        initial='',
     )
     public_share=forms.BooleanField(
         initial=False,required=False,
         label='Public Sharing',
     )
-
-    title.widget.attrs['size']=50
-    up_file.widget.attrs['size']=50
-    description.widget.attrs['cols']=50
-    #Co the dung text boi doan ma duoc chen vao trong the html
-    category.widget.attrs['style']='width:150'
-
 
 class HorizRadioRenderer(forms.RadioSelect.renderer):
     """ this overrides widget method to put radio buttons horizontally
@@ -95,7 +107,7 @@ class UserInfoForm(forms.Form):
     )
     year=forms.ChoiceField(
         label='Year',
-        choices=((str(x), x) for x in range(1912,2013)),
+        choices=((str(x), x) for x in range(1900,2013)),
         required=False,
     )
     about=forms.CharField(label='About',max_length=500,widget=forms.Textarea,required=False,)
@@ -106,40 +118,6 @@ class ProfileImageChangeForm(forms.Form):
         required=False
     )
 
-class PasswordChangeForm(forms.Form):
-    old_password=forms.CharField(
-        label='Old Password',
-        widget=forms.PasswordInput(),
-    )
-    new_password1=forms.CharField(
-        label='New Password',
-        widget=forms.PasswordInput(),
-    )
-    new_password2=forms.CharField(
-        label='Confirm New Password',
-        widget=forms.PasswordInput(),
-    )
-    '''
-    def clean_old_password(self):
-        if 'old_password' in self.cleaned_data:
-            return self.cleaned_data['old_password']
-        else :
-            raise forms.ValidationError('You must type your old password.')
-        '''
-    '''
-    def clean_new_password1(self):
-        if new_password1 in self.cleaned_data:
-            return self.cleaned_data['new_password1']
-        else :
-            raise forms.ValidationError('You must type your new password.')
-        '''
-    def clean_new_password2(self):
-        if 'new_password1' in self.cleaned_data:
-            new_password1 = self.cleaned_data['new_password1']
-            new_password2 = self.cleaned_data['new_password2']
-            if new_password1 == new_password2:
-                return new_password2
-        raise forms.ValidationError('Passwords do not match.')
 
 MAIN_FILTER_CHOICES=[
     ('posted_date','Posted Date'),

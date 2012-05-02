@@ -1,6 +1,6 @@
 {% extends "User/base_user_page.html" %}
-{% block title %}{% endblock %}
 {% block external %}{% endblock %}
+{% block title %}{{ user.username }}|Notifications{% endblock %}
 {% block base_user_content %}
     {% if not total_notifications %}
         <h4>You have no notification</h4>

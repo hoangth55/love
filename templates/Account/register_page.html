@@ -1,12 +1,12 @@
 {% extends "base.html" %}
-{% block title %}Login{% endblock %}
+{% block title %}User Registration{% endblock %}
 {% block content %}
-    <form id="login-form" method="post" action="/accounts/login/">
+    <form id="register-form" method="post" action="/register/">
         <table>
             {% csrf_token %}
             {{ form.as_table }}
         </table>
-        <input type="submit" value="Login" />
+        <input type="submit" value="Register" />
     </form>
     <h3>{{ status }}</h3>
 {% endblock %}

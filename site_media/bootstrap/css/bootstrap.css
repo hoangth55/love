@@ -2995,8 +2995,8 @@ button.btn.small, input[type="submit"].btn.small {
 }
 
 .navbar-inner {
-    padding-left: 20px;
-    padding-right: 20px;
+    padding-left: 20px ;
+    padding-right: 20px ;
     background-color: #1c1c1c;
 
     background-repeat: repeat-x;
@@ -3012,7 +3012,6 @@ button.btn.small, input[type="submit"].btn.small {
     padding-top: 10px;
     padding-left: 20px;
     padding-right: 20px;
-    min-height: 400px;
     background-color: #f2fff6;
 
     background-repeat: repeat-x;
@@ -3089,7 +3088,7 @@ button.btn.small, input[type="submit"].btn.small {
     float: left;
     display: block;
     padding: 8px 20px 12px;
-    margin-left: -60px;
+    /*margin-left: -60px;*/
     font-size: 20px;
     font-weight: 200;
     line-height: 1;

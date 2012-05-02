@@ -34,13 +34,13 @@ def mk_paginator(request,items,num_items):
     return items
 
 def main_page(request):
-    categories=Category.objects.all()
+    #categories=Category.objects.all()
     shared_books=Book.objects.filter(public_share=True)
     top_read=shared_books.order_by('-read_count')[:5]
     top_downloaded=shared_books.order_by('downloader_set.count')[:5]
     top_like=shared_books.order_by('vote_set.count')[:5]
     return render_to_response('index.html', RequestContext(request,
-        {'categories':categories,
+        {#'categories':categories,
          'top_read':top_read,
          'top_downloaded':top_downloaded,
          'top_like':top_like,
@@ -139,6 +139,7 @@ def user_page(request,username):
     })
     return render_to_response('User/user_page.html', variables)
 
+@login_required
 def user_book_page(request,username):
     if request.user.username==username:
         user=request.user
@@ -148,6 +149,7 @@ def user_book_page(request,username):
     else:
         return HttpResponseRedirect('/user/%s' %request.user.username)
 
+@login_required
 def user_image_page(request,username):
     if request.user.username==username:
         user=request.user
@@ -157,7 +159,7 @@ def user_image_page(request,username):
     else:
         return HttpResponseRedirect('/user/%s' %request.user.username)
 
-
+@login_required
 def user_video_page(request,username):
     if request.user.username==username:
         user=request.user
@@ -178,14 +180,12 @@ def user_profile(request,username):
             user_info=request.user.user_information
         else : user_info=User_Information.objects.create(user=request.user)
 
-        if user_info.gender is None:gender=None
-        elif user_info.gender:gender='m'
-        else: gender='f'
+        gender=user_info.gender
 
-        if not user_info.birth_date:
-            day=''
-            month=''
-            year=''
+        if user_info.birth_date is None :
+            day=None
+            month=None
+            year=None
         else:
             day=user_info.birth_date.day
             month=user_info.birth_date.month
@@ -239,7 +239,7 @@ def user_password_change(request,username):
     status=''
     if request.user.username==username:
         if request.method=='POST':
-            password_change_form=PasswordChangeForm(request.POST)
+            password_change_form=PasswordChangeForm(request.POST,label_suffix='')
             if password_change_form.is_valid():
                 old_password=password_change_form.cleaned_data['old_password']
                 new_password=password_change_form.cleaned_data['new_password1']
@@ -247,10 +247,11 @@ def user_password_change(request,username):
                     request.user.set_password(new_password)
                     status='Your password has been changed successfully!'
                 else:
-                    status='Your old password is not correct !'
+                    status='Your old password is not correct!'
             else:
-                status='The form is invalid !'
-        password_change_form=PasswordChangeForm(label_suffix='')
+                status='The form is invalid!'
+        else:
+            password_change_form=PasswordChangeForm(label_suffix='')
         return render_to_response('User/user_password_change_page.html',RequestContext(request,{'password_change_form':password_change_form,'status':status,}))
     else:
         return HttpResponseRedirect('/user/%s' %request.user.username)
@@ -270,7 +271,6 @@ def user_profile_image_change(request,username):
                 )
                 new_profile_image.save()
 
-                #Cap nhap avatar trong user_information
                 user_info.avatar=new_profile_image.id
                 user_info.save()
                 '''
@@ -291,29 +291,30 @@ def user_profile_image_change(request,username):
 #-------------------------Phan login,logout,register-------------------------#
 
 def login(request):
-    status='This is form !'
-    if request.method== "POST":
-        login_form=LoginForm(request.POST,label_suffix='')
-        if login_form.is_valid():
-            login_username=login_form.cleaned_data['username']
-            login_password=login_form.cleaned_data['password']
-            user = auth.authenticate(username=login_username, password=login_password)
-            if user is not None and user.is_active:
-                auth.login(request, user)
-                return HttpResponseRedirect('/user/'+login_username+'/')
+    status=''
+    if request.user.username:
+        return HttpResponseRedirect("/user/%s" %request.user.username)
+    else:
+        if request.method== "POST":
+            login_form=LoginForm(request.POST,label_suffix='')
+            if login_form.is_valid():
+                login_username=login_form.cleaned_data['username']
+                login_password=login_form.cleaned_data['password']
+                user = auth.authenticate(username=login_username, password=login_password)
+                if user is not None and user.is_active:
+                    auth.login(request, user)
+                    return HttpResponseRedirect('/user/'+login_username+'/')
+                else:
+                    status="This user is not exits!"
             else:
-                status="This user is not exits !"
-        variables=RequestContext(request,{
-            'form':LoginForm(),
-            'status':status
-        })
-        return render_to_response('Account/login_page.html',variables)
+                status="This form is not valid!"
+            login_form=LoginForm()
 
-    else :
-        login_form=LoginForm(label_suffix='')
+        else :
+            login_form=LoginForm(label_suffix='')
         variables= RequestContext(request,{
             'form':login_form,
-            'status':status
+            'status':status,
         })
         return render_to_response('Account/login_page.html',variables)
 
@@ -323,6 +324,7 @@ def logout(request):
 
 def register(request):
     auth.logout(request)
+    status=''
     if request.method == 'POST':
         form = RegistrationForm(request.POST,label_suffix='')
         if form.is_valid():
@@ -336,11 +338,13 @@ def register(request):
                 user=user,
             )
             user_info.save()
-            return HttpResponseRedirect('/')
+            status="Congratulation! You have successfully register to our library."
+        else:
+            status="The form is invalid!"
     else:
         form = RegistrationForm(label_suffix='')
-    variables = RequestContext(request, {'form': form})
-    return render_to_response('Account/register.html',variables)
+    variables = RequestContext(request, {'form': form,'status':status,})
+    return render_to_response('Account/register_page.html',variables)
 
 #-------------------------Het phan login,logout,register-------------------------#
 
@@ -363,7 +367,6 @@ def book_upload(request):
         if form.is_valid():
             book_file=form.cleaned_data['up_file']
             book_description=form.cleaned_data['description']
-            book_category=form.cleaned_data['category']
             if form.cleaned_data['public_share']:book_share=True
             else: book_share=False
 
@@ -372,7 +375,6 @@ def book_upload(request):
             book=Book.objects.create(
                 uploader=request.user,
                 title=book_name,
-                category=book_category,
                 book_file=book_file,
                 description=book_description,
                 public_share=book_share,
@@ -614,57 +616,103 @@ def get_notifications(request,username):
 
 #------------------------Het phan Forum---------------------------#
 
-def has_voted(user,book):
-    for vote in user.vote_set.all():
-        if vote.book==book:return True
-    else: return False
+def has_voted(user,media_object):
+    if media_object.__class__==Book:
+        for voted_book in user.voted_book_set.all():
+            if voted_book==media_object: return True
+        return False
+    if media_object.__class__==Image:
+        for voted_image in user.voted_image_set.all():
+            if voted_image==media_object: return True
+        return False
+    if media_object.__class__==Video:
+        for voted_video in user.voted_video_set.all():
+            if voted_video==media_object: return True
+        return False
+    return False
 
-def save_vote(request):
-    if request.method=='GET':
-        book_id=request.GET['id']
-        book=get_object_or_404(Book,pk=book_id)
-        new_vote=Vote.objects.create(
-            voter=request.user,
-            book=book,
-        )
-        new_vote.save()
+def save_vote(request,media_object_type,media_object_id):
+    if media_object_type=='book':
+        book=get_object_or_404(Book,id=media_object_id)
+        book.voters.add(request.user)
+        request.user.voted_book_set.add(book)
+    if media_object_type=='image':
+        image=get_object_or_404(Image,id=media_object_id)
+        image.voters.add(request.user)
+        request.user.voted_image_set.add(image)
+    if media_object_type=='video':
+        video=get_object_or_404(Video,id=media_object_id)
+        video.voters.add(request.user)
+        request.user.voted_video_set.add(video)
     return HttpResponseRedirect(request.META.get('HTTP_REFERER','/'))
 
+def has_viewed(user,media_object):
+    if media_object.__class__==Book:
+        for viewed_book in user.viewed_book_set.all():
+            if viewed_book==media_object: return True
+        return False
+    if media_object.__class__==Image:
+        for viewed_image in user.viewed_image_set.all():
+            if viewed_image==media_object: return True
+        return False
+    if media_object.__class__==Video:
+        for viewed_video in user.viewed_video_set.all():
+            if viewed_video==media_object: return True
+        return False
+    return False
 #------------------------Cac trang book ,image, video trong library-------------------#
 def book_page(request):
-    books=Book.objects.all().filter(public_share=True).order_by("-upload_date")
+    books=Book.objects.all().order_by("-upload_date")
     books=mk_paginator(request,books,20)
     return render_to_response('Book/books_page.html',RequestContext(request,{'books':books,}))
 def image_page(request):
-    images=Image.objects.all().filter(public_share=True).order_by("-upload_date")
+    images=Image.objects.all().order_by("-upload_date")
     images=mk_paginator(request,images,20)
     return render_to_response('Image/images_page.html',RequestContext(request,{'images':images,}))
 def video_page(request):
-    videos=Video.objects.all().filter(public_share=True).order_by("-upload_date")
+    videos=Video.objects.all().order_by("-upload_date")
     videos=mk_paginator(request,videos,20)
     return render_to_response('Video/videos_page.html',RequestContext(request,{'videos':videos,}))
 
 @login_required
 def book(request,book_id):
     book=get_object_or_404(Book,id=book_id)
-    if book.public_share:
-        return render_to_response('Book/book.html',RequestContext(request,{'book':book,}))
+    if book.public_share or request.user==book.uploader or are_friends(request.user,book.uploader):
+        if request.user==book.uploader: is_user=True
+        else: is_user=False
+        is_voted=has_voted(request.user,book)
+        if not has_viewed(request.user,book):
+            book.viewers.add(request.user)
+            request.user.viewed_book_set.add(book)
+        return render_to_response('Book/book.html',RequestContext(request,{'book':book,'is_voted':is_voted,'is_user':is_user,}))
     else:
         return render_to_response('Book/book.html',RequestContext(request,{'book':None,}))
 
 @login_required
 def image(request,image_id):
     image=get_object_or_404(Image,id=image_id)
-    if image.public_share:
-        return render_to_response('Image/image.html',RequestContext(request,{'image':image,}))
+    if image.public_share or request.user==image.uploader or are_friends(request.user,image.uploader):
+        if request.user==image.uploader: is_user=True
+        else: is_user=False
+        is_voted=has_voted(request.user,image)
+        if not has_viewed(request.user,image):
+            image.viewers.add(request.user)
+            request.user.viewed_image_set.add(image)
+        return render_to_response('Image/image.html',RequestContext(request,{'image':image,'is_voted':is_voted,'is_user':is_user,}))
     else:
         return render_to_response('Image/image.html',RequestContext(request,{'image':None,}))
 
 @login_required
 def video(request,video_id):
     video=get_object_or_404(Video,id=video_id)
-    if video.public_share:
-        return render_to_response('Video/video.html',RequestContext(request,{'video':video,}))
+    if video.public_share or request.user==video.uploader or are_friends(request.user,video.uploader):
+        if request.user==video.uploader: is_user=True
+        else: is_user=False
+        is_voted=has_voted(request.user,video)
+        if not has_viewed(request.user,image):
+            video.viewers.add(request.user)
+            request.user.viewed_video_set.add(video)
+        return render_to_response('Video/video.html',RequestContext(request,{'video':video,'is_voted':is_voted,'is_user':is_user,}))
     else:
         return render_to_response('Video/video.html',RequestContext(request,{'video':None,}))
 #------------------------Het cac trang book ,image, video trong library-------------------#
@@ -700,85 +748,15 @@ def search(request):
     }
     return render_to_response('Search/search_page.html',RequestContext(request,variables))
 
-
-def file_download(request,book_id):
+@login_required
+def book_download(request,book_id):
     book=Book.objects.get(id=int(book_id))
     downloaded_file=book.book_file
-    #Can kiem tra file name, chinh file name thong qua split va splitext
     response=HttpResponse(FileWrapper(downloaded_file), content_type='application/pdf')
-
     response['Content-Disposition'] = 'attachment; filename=%s' %downloaded_file.name
-
     return response
 
 
-def library(request):
-    categories=Category.objects.all()
-    books={}
-    for category in categories:
-        book_group=category.book_set.filter(public_share=True)
-        books[category.name]=book_group.order_by('-upload_date')[:3]
-    return render_to_response('library.html',RequestContext(request,{'categories':categories,'books':books}))
-
-
-
-
-def category(request,category_name):
-    if not request.GET:
-        return HttpResponseRedirect('/library/%s/?page=1' %category_name)
-    else:
-        try:
-            page=int(request.GET['page'])
-        except ObjectDoesNotExist:
-            return Http404
-        #return render_to_response('check_page.html',RequestContext(request,{'page':page}))
-
-    page=int(request.GET['page'])
-    category=get_object_or_404(Category,name=category_name)
-
-    if request.POST:
-        filter_form=FilterForm(request.POST,label_suffix='')
-        if filter_form.is_valid():
-            main_filter=filter_form.cleaned_data['main_filter']
-            sub_filter=filter_form.cleaned_data['sub_filter']
-            global MAIN_FIL,SUB_FIL
-            MAIN_FIL=main_filter
-            SUB_FIL=sub_filter
-            filter_form.initial={'main_filter':MAIN_FIL,'sub_filter':SUB_FIL}
-    else:
-        filter_form=FilterForm(label_suffix='',initial={'main_filter':MAIN_FIL,'sub_filter':SUB_FIL})
-
-    books=book_filter(category,MAIN_FIL,SUB_FIL)
-
-    if books is None:
-        status='There are no book in %s category' %category_name
-        return render_to_response('Book/category_page.html',RequestContext(request,{'category':category,'status':status}))
-
-    else:
-        status='There are %s books in %s category' %(books.count(),category_name)
-        books=mk_paginator(request,books,2)
-        #return render_to_response('category_page.html',variables)
-        return render_to_response('Book/category_page.html',RequestContext(request,{'category':category,'books':books,'form':filter_form,'page':page}))
-
-
-
-#Can xem xet them
-def video_page(request):
-    videos=Video.objects.all()
-    videos=videos.filter(public_share=True)
-    is_vote=has_voted(request.user,video)
-    return render_to_response('Video/videos_page.html',RequestContext(request,{'videos':videos,}))
-
-def image_page(request):
-    images=Image.objects.all()
-    images=images.filter(public_share=True)
-    return render_to_response('Image/images_page.html',{'images':images,})
-
-def book_page(request,category_name,book_id):
-    category=get_object_or_404(Category,name=category_name)
-    book=Book.objects.get(id=book_id)
-    is_voted=has_voted(request.user,book)
-    return render_to_response('Book/books_page.html',RequestContext(request,{'book':book,'is_voted':is_voted}))
 
 #Co van de
 MAIN_FIL='upload_date'

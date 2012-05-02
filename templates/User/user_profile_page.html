@@ -1,6 +1,8 @@
 {% extends "User/base_user_page.html" %}
+{% block external %}{% endblock %}
 {% block title %}{{ user.username }}|Information{% endblock %}
 {% block base_user_content %}
+    <h2>My Profile</h2>
     <form method="post" action="/user/{{ user.username }}/profile_config/">
         {% csrf_token %}
         <table>

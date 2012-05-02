@@ -1,8 +1,7 @@
 {% extends "base.html" %}
-{% block title %}{% endblock %}
 {% block external %}{% endblock %}
+{% block title %}{% endblock %}
 {% block content %}
-
     {% if profile_image_status == 0 %}
         <img src="/site_media/img/user_images/male_user.png" alt="Male User Image"/>
     {% else %}
@@ -13,48 +12,26 @@
     {% endif %}
 
     <div class="navbar-inner-background">
-
         <div class="row-fluid">
             <div class="span3">
                 <div class="well sidebar-nav">
                     <ul class="nav nav-list">
-                        <li class="active"><a href="#">Your account</a></li>
+                        <li class="active" ><a href="/user/{{ user.name }}/profile_image_change"><b>Profile Picture</b></a></li>
                         <li class="divider"></li>
-                        <img id="avatar" src="http://u.ph.edim.co/default-avatars/default_avatar.png">
-                        <a id="avatarName" href="/user/{{ user.username }}">{{ user.username }}</a><br>
+                        <li><img id="avatar" src="http://u.ph.edim.co/default-avatars/default_avatar.png"></li>
 
-
-                        <li class="active"><a href="#">Other</a></li>
+                        <li class="active"><a href=""><b>Functions</b></a></li>
                         <li class="divider"></li>
-
-                        <input id="upload_button" type="button" name="upload" value="Upload"/>
-                        <div id="upload_select_table" style="width:200px;height:100px;background-color:brown;display:none">
-                            <a href="/upload/book" >Book Upload</a>
-                            <a href="/upload/image" >Image Upload</a>
-                            <a href="/upload/image_link" >Image Link Upload</a>
-                            <a href="/upload/video_link" >Video Link Upload</a>
-                        </div>
-                        <script type="text/javascript">
-                            $("#upload_button").click(function(){
-                                var select_table=$("#upload_select_table");
-                                if(select_table.css("display")=="none") {select_table.fadeIn();}
-                                else {select_table.fadeOut();}
-                            })
-                        </script>
-
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Upload files <b
-                                    class="caret"></b></a>
+                            <a href="" class="dropdown-toggle" data-toggle="dropdown">Upload<b class="caret"></b></a>
+
                             <ul class="dropdown-menu">
                                 <li><a href="/upload/book">Book Upload</a></li>
                                 <li><a href="/upload/image">Image Upload</a></li>
                                 <li><a href="/upload/image_link">Image Link Upload</a></li>
-                                <li><a href="/upload/video">Video Upload</a></li>
+                                <li><a href="/upload/video_link">Video Link Upload</a></li>
                             </ul>
                         </li>
-                        <li><a href="/library/{{ user.username }}">Library</a></li>
-                        <li><a href="#">Link</a></li>
-
                     </ul>
                 </div>
                 <br><br>
@@ -115,14 +92,6 @@
                         <li class=""><a href="/user/{{ user.username }}/books">Books</a></li>
                         <li class=""><a href="/user/{{ user.username }}/videos">Videos</a></li>
                         <li class=""><a href="/user/{{ user.username }}/images">Images</a></li>
-
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Media <b class="caret"></b></a>
-                            <ul class="dropdown-menu">
-                                <li><a href="/videos">Videos</a></li>
-                                <li><a href="/images">Images</a></li>
-                            </ul>
-                        </li>
                     </ul>
 
                 </ul>
@@ -141,15 +110,27 @@
             <div class="span2">
                 <div class="well sidebar-nav">
                     <ul class="nav nav-list">
-                        <li class="active"><a href="#">Action</a></li>
+                        <li class="active"><a href="#">Books</a></li>
                         <li class="divider"></li>
-                        <li><a href="#">Add</a></li>
-                        <li><a href="#">Delete</a></li>
-                        <li><a href="#">Upgrade</a></li>
-                        <li class="active"><a href="#">Other</a></li>
+                            {% if not books.object_list.count %}
+                                <h4>You haven't uploaded any book</h4>
+                            {% else %}
+                                <h4>You have uploaded {{ books.object_list.count }} book(s)</h4>
+                            {% endif %}
+                        <li class="active"><a href="#">Video</a></li>
                         <li class="divider"></li>
-                        <li><a href="#">Link</a></li>
-                        <li><a href="#">Link</a></li>
+                            {% if not videos.object_list.count %}
+                                <h4>You haven't uploaded any video</h4>
+                            {% else %}
+                                <h4>You have uploaded {{ books.object_list.count }} video(s)</h4>
+                            {% endif %}
+                        <li class="active"><a href="#">Image</a></li>
+                        <li class="divider"></li>
+                            {% if not images.object_list.count %}
+                                <h4>You haven't uploaded any image</h4>
+                            {% else %}
+                                <h4>You have uploaded {{ books.object_list.count }} image(s)</h4>
+                            {% endif %}
                     </ul>
                 </div>
                 <!--/.well -->

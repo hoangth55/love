@@ -1,13 +1,38 @@
 {% extends "User/base_user_page.html" %}
+{% block external %}{% endblock %}
 {% block title %}{{ user.username }}|Books{% endblock %}
 {% block base_user_content %}
     {% if not books.object_list.count %}
         <h3>You haven't uploaded any book</h3>
     {% else %}
         <h3>You have uploaded {{ books.object_list.count }} book(s)</h3>
-        {% with books=books.object_list %}
-            {% include "Book/base_book.html" %}
-        {% endwith %}
+        {% for book in books.object_list %}
+            <div class="media_object_list">
+                <h2><a href="/book/{{ book.id }}">{{ book.title }}</a></h2>
+                <a href="/book/{{ book.id }}">book icon</a>
+                <table>
+                    <tr>
+                        <th valign="top" style="padding: 8px 5px 5px 5px">
+
+                        </th>
+                        <td valign="top" style="padding: 2px 5px 5px 5px">
+                            <h3>
+                                Shared by: <a href="/user/{{ book.uploader }}/" >You</a><br/>
+                                Uploaded date: {{ book.uploaded_date }}<br/>
+                                {% if Book.public_share %}
+                                    Sharing: Public
+                                    <a href="/set_private/image/{{ book.id }}"><input type="button" value="Private"/></a>
+                                {% else %}
+                                    Sharing: Private
+                                    <a href="/set_public/image/{{ book.id }}"><input type="button" value="Public"/></a>
+                                {% endif %}
+                            </h3>
+                        </td>
+                    </tr>
+                </table>
+                <a href="/book_delete/{{ book.id }}"><input type="button" value="Delete"/></a>
+            </div>
+        {% endfor %}
 
         {# -------Phan trang--------- #}
         {% with object_holder=books %}

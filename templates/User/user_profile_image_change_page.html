@@ -1,6 +1,8 @@
-{{% extends 'User/base_user_page.html' %}
+{% extends 'User/base_user_page.html' %}
+{% block external %}{% endblock %}
 {% block title %}{{ user.username }}|Profile Image Upload{% endblock %}
 {% block content %}
+    <h2>Avatar</h2>
     {% if avatar_image %}
         {# <avatar_image src="#" alt="Profile Picture" width="200px" height="200px"/> #}
         {% load thumbnail %}

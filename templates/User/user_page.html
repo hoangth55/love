@@ -1,9 +1,7 @@
 {% extends "User/base_user_page.html" %}
-{% block external %}
-
-{% endblock %}
+{% block external %}{% endblock %}
+{% block title %}{{ user.username }}{% endblock %}
 {% block base_user_content %}
-
 {% if is_user %}
     <h2>Notifications</h2>
     <h2><a href="/user/{{ user.username }}/friend_requests">Friend Requests</a></h2>
@@ -16,6 +14,20 @@
     {% else %}
     {% endif %}
     {% endif %}
+    <input id="upload_button" type="button" name="upload" value="Upload"/>
+    <div id="upload_select_table" style="width:200px;height:100px;background-color:brown;display:none">
+        <a href="/upload/book" >Book Upload</a>
+        <a href="/upload/image" >Image Upload</a>
+        <a href="/upload/image_link" >Image Link Upload</a>
+        <a href="/upload/video_link" >Video Link Upload</a>
+    </div>
+    <script type="text/javascript">
+        $("#upload_button").click(function(){
+            var select_table=$("#upload_select_table");
+            if(select_table.css("display")=="none") {select_table.fadeIn();}
+            else {select_table.fadeOut();}
+        })
+    </script>
 
 {% else %}
     Ten: {{ other_user.username }}<br/>

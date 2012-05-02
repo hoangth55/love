@@ -37,6 +37,9 @@ urlpatterns = patterns('',
     url(r'^user/(\w+)/images',user_image_page),
     url(r'^user/(\w+)/videos',user_video_page),
 
+    #Make Friend
+    url(r'^make_friend/$',make_friend),
+
     #Notifications
     url(r'^user/(\w+)/notifications/$',get_notifications),
 
@@ -46,11 +49,12 @@ urlpatterns = patterns('',
     url(r'^user/(\w+)/friend_decline/$',decline_friend),
 
     #Library
-    url(r'^library/$',library),
-    url(r'^library/(\w+)/$',category),
-    url(r'^library/(\w+)/(\d+)',book_page),
-    url(r'^library/images/$',image_page),
-    url(r'^library/videos/$',video_page),
+    url(r'^books/$',book_page),
+    url(r'^images/$',image_page),
+    url(r'^videos/$',video_page),
+    url(r'^book/(\d+)/$',book),
+    url(r'^image/(\d+)/$',image),
+    url(r'^video/(\d+)/$',video),
 
     #Delete
     url(r'^book_delete/(\d+)/$',delete_book),
@@ -61,38 +65,18 @@ urlpatterns = patterns('',
     url(r'^set_public/(\w+)/(\d+)/$',set_public_media_object),
     url(r'^set_private/(\w+)/(\d+)/$',set_private_media_object),
 
-
-    #Test cloud
-    #url(r'^tag_cloud/$',tag_cloud),
+    #Voting
+    url(r'vote/(\w+)/(\d+)/$',save_vote),
 
     #Upload
     url(r'^upload/(\w+)/$',file_upload),
-    #url(r'^upload/success/$',file_upload_success),
-    url(r'^download/(\d+)/$',file_download),
-
-    url(r'^pdf_display/$',direct_to_template,{'template':'pdf_display.html'}),
+    #Download book
+    url(r'^download/book/(\d+)/$',book_download),
 
     #Forum
     url(r'^forum/$',mainForum),
     url(r'^forum/(\d+)/$',forum),
     url(r'^thread/(\d+)/$',thread),
 
-    #Friend
-    url(r'make_friend/$',make_friend),
-
-    #Vote
-    url(r'vote/$',save_vote),
-
-
-    #Video
-    #url(r'^video/success/$',AddVideoSuccess),
-
-    #Image
-    url(r'^image/upload/$',image_upload),
-    url(r'^image/add/$',image_link_upload),
-    #url(r'^image/success/$',ImageDone),
-
     #url(r'^search/$',search),
-
-
 )

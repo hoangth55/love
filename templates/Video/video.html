@@ -1,5 +1,65 @@
 {% extends "base.html" %}
-{% block title %}Video| {{ video.id }}{% endblock %}
+{% block title %}Video | {{ video.id }}{% endblock %}
 {% block external %}{% endblock %}
 {% block content %}
+    {% if not video %}
+        This video is set to be private.
+        You must be friend with <a href="/user/{{ video.uploader }}">{{ video.uploader }}</a> to view this video
+    {% else %}
+        <div class="navbar-inner-background">
+            <div class="row-fluid">
+                <div class="span3">
+                    <div class="well sidebar-nav">
+                        <ul class="nav nav-list">
+                            <div class="media_object">
+                                <li ><a href=""><b>Video Information</b></a></li>
+                                <li class="divider"></li>
+                                <h3>
+                                    {% with media_object=video%}
+                                        {% with media_object_type="video" %}
+                                            {% include "Media_object/media_object_detail_info.html" %}
+                                        {% endwith %}
+                                    {% endwith %}
+                                </h3>
+                            </div>
+                        </ul>
+                    </div>
+                    <br><br>
+                </div>
+                <!--/span-->
+                <div class="span7">
+                    <div class="modal" style="position: relative; top: auto; left: auto; margin: 0 auto; z-index: 1">
+                        <div class="modal-body">
+                            Preview
+                        </div>
+                        <div class="modal-footer">
+                            <div class="media_object">
+                                <h2> {{ video.title }}</h2>
+                                <iframe width="640" height="400" src="http://www.youtube.com/embed/{{ video.get_Youtube_video_id }}" frameborder="0" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--/span-->
+                <div class="span2">
+                    <div class="well sidebar-nav">
+                        <h3>Viewers</h3>
+                        {% for viewer in video.viewers.all %}
+                            <a href="/user/{{ viewer.username }}">{{ viewer.username }}</a>
+                        {% endfor %}
+                        <br/>
+                        <h3>Voter</h3>
+                        {% for voter in video.voters.all %}
+                            <a href="/user/{{ voter.username }}">{{ voter.username }}</a>
+                        {% endfor %}
+                    </div>
+                    <!--/.well -->
+                </div>
+                <!--/span-->
+            </div>
+            <!--/row-->
+
+            <br> <br>
+        </div>
+    {% endif %}
 {% endblock %}

@@ -1,5 +1,63 @@
 {% extends "base.html" %}
-{% block title %}Book| {{ book.id }}{% endblock %}
+{% block title %}Book | {{ book.id }}{% endblock %}
 {% block external %}{% endblock %}
 {% block content %}
+    {% if not book %}
+        This book is set to be private.
+        You must be friend with <a href="/user/{{ book.uploader }}">{{ book.uploader }}</a> to view this book
+    {% else %}
+        <div class="navbar-inner-background">
+            <div class="row-fluid">
+                <div class="span3">
+                    <div class="well sidebar-nav">
+                        <div class="media_object">
+                            <li ><a href=""><b>Book Information</b></a></li>
+                            <li class="divider"></li>
+                            <h3>
+                                {% with media_object=book%}
+                                    {% with media_object_type="book" %}
+                                        {% include "Media_object/media_object_detail_info.html" %}
+                                    {% endwith %}
+                                {% endwith %}
+                            </h3>
+                        </div>
+                    </div>
+                    <br><br>
+                </div>
+                <!--/span-->
+                <div class="span7">
+                    <div class="modal" style="position: relative; top: auto; left: auto; margin: 0 auto; z-index: 1">
+                        <div class="modal-body">
+                            <h2> {{ book.title }}</h2>
+                        </div>
+                        <div class="modal-footer">
+                            Sorry, we haven't developed an pdf reading application yet !
+                            You should follow this <a href="/download/book/{{ book.id }}">link </a>to download the book
+                        </div>
+                    </div>
+
+                </div>
+                <!--/span-->
+
+                <div class="span2">
+                    <div class="well sidebar-nav">
+                        <h3>Viewers</h3>
+                        {% for viewer in book.viewers.all %}
+                            <a href="/user/{{ viewer.username }}">{{ viewer.username }}</a>
+                        {% endfor %}
+                        <br/>
+                        <h3>Voters</h3>
+                        {% for voter in book.voters.all %}
+                            <a href="/user/{{ voter.username }}">{{ voter.username }}</a>
+                        {% endfor %}
+                    </div>
+                    <!--/.well -->
+                </div>
+                <!--/span-->
+            </div>
+            <!--/row-->
+
+            <br> <br>
+        </div>
+    {% endif %}
 {% endblock %}
